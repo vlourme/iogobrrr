@@ -7,6 +7,8 @@ use std::{io, os::unix::io::RawFd};
 pub enum Event {
     /// Multishot Accept: Accept multiple connections at once
     MultishotAccept(MultishotAcceptEvent),
+    /// Nop: No operation
+    Nop,
     /// Accept: Accept a single connection
     Accept(AcceptEvent),
     /// Read: Read data from a socket
@@ -102,6 +104,7 @@ impl IoUring {
             Event::PollMultishot(event) => {
                 unsafe { io_uring_prep_poll_multishot(sqe, event.fd, event.events as _) };
             }
+            Event::Nop => unsafe { io_uring_prep_nop(sqe) },
             Event::Accept(event) => unsafe {
                 io_uring_prep_accept(sqe, event.socket, event.addr, event.addrlen, event.flags);
             },

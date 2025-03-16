@@ -28,6 +28,14 @@ pub fn get_conn_info(user_data: u64) -> Option<ConnInfo> {
     // Return a copy of the data
     Some(ConnInfo {
         fd: conn_info.fd,
-        conn_type: conn_info.conn_type.clone(),
+        conn_type: conn_info.conn_type,
     })
+}
+
+pub fn is_zero(buf: &[u8]) -> bool {
+    let (prefix, aligned, suffix) = unsafe { buf.align_to::<u128>() };
+
+    prefix.iter().all(|&x| x == 0)
+        && suffix.iter().all(|&x| x == 0)
+        && aligned.iter().all(|&x| x == 0)
 }
